@@ -19,10 +19,12 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 
 import org.jellyfin.androidtv.R;
+import org.jellyfin.androidtv.constant.Codec;
 import org.jellyfin.androidtv.constant.QueryType;
 import org.jellyfin.androidtv.data.compat.AudioOptions;
 import org.jellyfin.androidtv.data.compat.StreamInfo;
 import org.jellyfin.androidtv.data.model.DataRefreshService;
+import org.jellyfin.androidtv.preference.UserPreferences;
 import org.jellyfin.androidtv.preference.UserSettingPreferences;
 import org.jellyfin.androidtv.ui.itemhandling.AudioQueueItem;
 import org.jellyfin.androidtv.ui.itemhandling.BaseRowItem;
@@ -606,7 +608,10 @@ public class LegacyMediaManager implements MediaManager {
         options.setMediaSources(item.getMediaSources());
         DeviceProfile profile;
         if (DeviceUtils.is60()) {
-            profile = new ExoPlayerProfile(context, false, false);
+            String[] audioDirectPlay = { Codec.Audio.AAC, Codec.Audio.MP3, Codec.Audio.MP2 };
+            String[] audioTranscode = { Codec.Audio.AAC, Codec.Audio.MP3, Codec.Audio.MP2 };
+            Boolean enable4kSupport = userPrefs.getValue().get(UserPreferences.Companion.getEnable4kSupport());
+            profile = new ExoPlayerProfile(context, false, audioDirectPlay, audioTranscode, enable4kSupport);
         } else {
             profile = new LibVlcProfile(context, false);
         }
